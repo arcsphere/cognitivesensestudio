@@ -1,0 +1,20 @@
+[
+  {"id":"distil","name":"Distil","description":"Strip to the bare, honest meaning.","prompt":"Distil this into its bare honest meaning. Be concise. Do not add advice."},
+  {"id":"question","name":"Find the question","description":"Surface what is hiding inside.","prompt":"Find the real question hiding in this text. State only the question or questions."},
+  {"id":"simple","name":"Rephrase simply","description":"Plain language, emotional weight intact.","prompt":"Rephrase in the plainest possible language while keeping its emotional weight."},
+  {"id":"actions","name":"Potential actions","description":"What this thought wants to do.","prompt":"Name a few concrete actions this thought seems to want. Do not moralise."},
+  {"id":"problem","name":"Is this a problem?","description":"Diagnose what kind of thing this is.","prompt":"Diagnose what kind of thing this is: problem, feeling, uncertainty, conflict, or something else. Be precise and brief."},
+  {"id":"lands","name":"How it lands","description":"How a thoughtful stranger might receive it.","prompt":"Describe how a thoughtful stranger might receive this, with care and without judgment."},
+  {"id":"views","name":"Other views","description":"2–3 contrasting angles, without moralising.","prompt":"Offer 2 or 3 contrasting angles, labelled. Do not moralise or resolve the issue."},
+  {"id":"tension","name":"Find the tension","description":"Name the contradiction. Do not resolve it.","prompt":"Name the central tension or contradiction. Do not resolve it."},
+  {"id":"drop","name":"What to drop","description":"Find the noise and what can be released.","prompt":"Identify what may be noise here and what could be released. Be gentle and concise."},
+  {"id":"personas","name":"Through personas","description":"Stoic, skeptic, poet, child, elder.","prompt":"Give one line each through these personas: Stoic, Skeptic, Poet, Curious Child, Elder."},
+  {"id":"philosophy","name":"Through philosophy","description":"Krishnamurti, Stoic, Zen.","prompt":"Give one line each through Krishnamurti, Stoicism, and Zen. Do not imitate quotes."},
+  {"id":"mantra","name":"Distil to a mantra","description":"Compress into short living phrases.","prompt":"Compress this into 2 or 3 short, living phrases."},
+  {"id":"tamil","name":"Tamil gap","description":"What English cannot hold.","prompt":"Name what English cannot hold here. Use a few apt Tamil words with short English glosses. Do not invent terms."},
+  {"id":"feeling","name":"Restate with feeling","description":"Say it the way it wanted to be said.","prompt":"Restate this with its feeling intact, the way it wanted to be said."},
+  {"id":"reality_deviation","name":"Deviation from reality","description":"Distance from physical-world reality, with a meter.","prompt":"Assess how far this text deviates from physical-world reality. Return exactly: Meter: N/100, then 2-4 short notes. 0 means directly grounded in observable physical reality. 100 means almost entirely detached from physical-world reality. Be careful, non-mocking, and concise."},
+  {"id":"science_deviation","name":"Deviation from science","description":"Distance from current scientific consensus, with a meter.","prompt":"Assess how far this text deviates from established scientific consensus. Return exactly: Meter: N/100, then 2-4 short notes. 0 means aligned with current science. 100 means strongly contradicted by current science. If the text is not a scientific claim, say so and keep the meter low."},
+  {"id":"evidence_needed","name":"Evidence needed","description":"What would make this more knowable.","prompt":"Name the minimum evidence, observation, or test that would make this thought more knowable. Do not argue with the writer."},
+  {"id":"assumptions","name":"Hidden assumptions","description":"Surface what the thought is leaning on.","prompt":"List the hidden assumptions this text appears to rely on. Keep each assumption short. Do not decide whether they are true."}
+]
