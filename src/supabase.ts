@@ -64,12 +64,16 @@ export class SupabaseStore {
 
   async save(snapshot: Partial<SyncSnapshot>) {
     if (!this.configured || !this.user) return
-    await Promise.all([
-      snapshot.threads ? this.upsert('threads', snapshot.threads) : undefined,
-      snapshot.bookmarks ? this.upsert('bookmarks', snapshot.bookmarks) : undefined,
-      snapshot.board ? this.upsert('board_items', snapshot.board) : undefined,
-      snapshot.actions ? this.upsert('action_rooms', snapshot.actions) : undefined,
-    ])
+    try {
+      await Promise.all([
+        snapshot.threads ? this.upsert('threads', snapshot.threads) : undefined,
+        snapshot.bookmarks ? this.upsert('bookmarks', snapshot.bookmarks) : undefined,
+        snapshot.board ? this.upsert('board_items', snapshot.board) : undefined,
+        snapshot.actions ? this.upsert('action_rooms', snapshot.actions) : undefined,
+      ])
+    } catch (error) {
+      console.warn('Supabase sync failed; local cache preserved.', error)
+    }
   }
 
   async remove(table: 'threads' | 'bookmarks' | 'board_items' | 'action_rooms', idColumn: string, id: string) {
