@@ -9,7 +9,10 @@ export async function loadLenses(): Promise<Lens[]> {
   } catch { /* use bundled definitions below */ }
   return applyPromptOverrides(bundledLenses as Lens[])
 }
-export function loadPromptOverrides() { return JSON.parse(localStorage.getItem(promptKey) || '{}') as Record<string, string> }
+export function loadPromptOverrides() {
+  try { return JSON.parse(localStorage.getItem(promptKey) || '{}') as Record<string, string> }
+  catch { localStorage.removeItem(promptKey); return {} }
+}
 export function applyPromptOverrides(lenses: Lens[]) {
   const overrides = loadPromptOverrides()
   return lenses.map(lens => ({ ...lens, prompt: overrides[lens.id] || lens.prompt }))

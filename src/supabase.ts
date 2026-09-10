@@ -11,7 +11,12 @@ const env = import.meta.env as Record<string, string | undefined>
 export class SupabaseStore {
   readonly url = env.VITE_SUPABASE_URL?.replace(/\/$/, '') || ''
   readonly anonKey = env.VITE_SUPABASE_ANON_KEY || ''
-  private session: Session | null = JSON.parse(localStorage.getItem(sessionKey) || 'null') as Session | null
+  private session: Session | null = SupabaseStore.readSession()
+
+  private static readSession(): Session | null {
+    try { return JSON.parse(localStorage.getItem(sessionKey) || 'null') as Session | null }
+    catch { localStorage.removeItem(sessionKey); return null }
+  }
 
   get configured() { return Boolean(this.url && this.anonKey) }
   get user() { return this.session?.user || null }
