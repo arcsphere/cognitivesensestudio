@@ -1,10 +1,13 @@
+import bundledLenses from '../lenses.json'
+
 export type Lens = { id: string; name: string; description: string; prompt: string }
 const promptKey = 'cognitive-studio-lens-prompts'
 export async function loadLenses(): Promise<Lens[]> {
-  const response = await fetch('/lenses.json')
-  if (!response.ok) throw new Error('Could not load lenses.')
-  const lenses = await response.json() as Lens[]
-  return applyPromptOverrides(lenses)
+  try {
+    const response = await fetch('/lenses.json')
+    if (response.ok) return applyPromptOverrides(await response.json() as Lens[])
+  } catch { /* use bundled definitions below */ }
+  return applyPromptOverrides(bundledLenses as Lens[])
 }
 export function loadPromptOverrides() { return JSON.parse(localStorage.getItem(promptKey) || '{}') as Record<string, string> }
 export function applyPromptOverrides(lenses: Lens[]) {
