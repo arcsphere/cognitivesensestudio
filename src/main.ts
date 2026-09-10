@@ -14,7 +14,7 @@ const app = document.querySelector<HTMLDivElement>('#app')!
 const version = '0.3.0'
 
 app.innerHTML = `
-  <header class="topbar"><a class="wordmark" href="#">Cognitive <em>Studio</em></a><span id="thread-status" class="thread-status">Untitled thread</span><span id="auth-status" class="auth-status">local only</span><span id="model-status" class="model-status">○ detecting model</span><div class="topbar-actions"><button id="auth-toggle" class="auth-button">Sign in</button><button id="board-toggle" class="icon-button" title="Canvas board" aria-label="Open canvas board">□</button><button id="museum-toggle" class="icon-button" title="Sentence museum" aria-label="Open sentence museum">▧</button><button id="prompt-toggle" class="icon-button" title="Prompt config" aria-label="Configure lens prompts">✎</button><button id="theme-toggle" class="icon-button" title="Theme" aria-label="Switch theme">◐</button><button id="settings-toggle" class="icon-button" title="Model settings" aria-label="Open settings">⚙</button></div></header>
+  <header class="topbar"><a class="wordmark" href="#">Cognitive <em>Studio</em></a><span id="thread-status" class="thread-status">Untitled thread</span><span id="auth-status" class="auth-status">local only</span><span id="model-status" class="model-status">○ detecting model</span><div class="topbar-actions"><button id="auth-toggle" class="auth-button">Optional sync</button><button id="board-toggle" class="icon-button" title="Canvas board" aria-label="Open canvas board">□</button><button id="museum-toggle" class="icon-button" title="Sentence museum" aria-label="Open sentence museum">▧</button><button id="prompt-toggle" class="icon-button" title="Prompt config" aria-label="Configure lens prompts">✎</button><button id="theme-toggle" class="icon-button" title="Theme" aria-label="Switch theme">◐</button><button id="settings-toggle" class="icon-button" title="Model settings" aria-label="Open settings">⚙</button></div></header>
   <main class="studio">
     <nav id="threads" class="thread-panel" aria-label="Writing threads"></nav>
     <section class="canvas-panel" aria-label="Writing canvas">
@@ -55,7 +55,9 @@ let lenses: Lens[] = []
 async function updateStatus(next = config) {
   config = next
   const badge = document.querySelector('#model-status')!
-  badge.textContent = config.provider === 'none' ? '○ no model — configure' : `● ${config.model || 'model'} — ${config.provider === 'ollama' || config.provider === 'lmstudio' ? 'local' : 'cloud'}`
+  const local = config.provider === 'ollama' || config.provider === 'lmstudio'
+  const server = config.provider === 'vercel-openai' || config.provider === 'vercel-gemini'
+  badge.textContent = config.provider === 'none' ? '○ no model — configure' : `● ${config.model || 'model'} — ${local ? 'local' : server ? 'Vercel' : 'cloud'}`
   badge.classList.toggle('available', config.provider !== 'none')
 }
 
@@ -67,7 +69,9 @@ function updateThreadStatus() {
 
 function updateAuthStatus() {
   document.querySelector('#auth-status')!.textContent = store.statusLabel
-  document.querySelector('#auth-toggle')!.textContent = store.user ? 'Sign out' : 'Sign in'
+  const auth = document.querySelector<HTMLButtonElement>('#auth-toggle')!
+  auth.textContent = store.user ? 'Sign out' : store.configured ? 'Optional sync' : 'Local mode'
+  auth.hidden = !store.configured && !store.user
 }
 
 function selectedText() {
