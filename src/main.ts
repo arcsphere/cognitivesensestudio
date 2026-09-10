@@ -86,23 +86,28 @@ function setBusy(busy: boolean, label = 'Running lens…') {
 }
 
 async function boot() {
+  // Render the lenses first: optional sync/model detection must never blank the core writing UI.
+  lenses = await loadLenses()
+  promptConfig.setLenses(lenses)
+  renderLenses(document.querySelector('#lenses')!, lenses, run)
   store.captureRedirectSession()
-  await store.hydrateUser()
+  try {
+    await store.hydrateUser()
+    const remote = await store.load()
+    if (remote.threads?.length) threads.replaceAll(remote.threads)
+    if (remote.bookmarks?.length) bookmarks.replaceAll(remote.bookmarks)
+    if (remote.board?.length) board.replaceAll(remote.board)
+    if (remote.actions?.length) actionRoom.replaceAll(remote.actions)
+  } catch (error) { console.warn('Optional cloud sync unavailable; continuing in local mode.', error) }
   updateAuthStatus()
-  const remote = await store.load()
-  if (remote.threads?.length) threads.replaceAll(remote.threads)
-  if (remote.bookmarks?.length) bookmarks.replaceAll(remote.bookmarks)
-  if (remote.board?.length) board.replaceAll(remote.board)
-  if (remote.actions?.length) actionRoom.replaceAll(remote.actions)
-  const detected = await detectProvider(config)
-  if (detected.provider !== 'none') { settings.set(detected); config = detected }
+  try {
+    const detected = await detectProvider(config)
+    if (detected.provider !== 'none') { settings.set(detected); config = detected }
+  } catch (error) { console.warn('Local model detection unavailable.', error) }
   updateStatus(config)
   canvas.setText(threads.active.text)
   updateThreadStatus()
   if (config.provider === 'none') settings.open()
-  lenses = await loadLenses()
-  promptConfig.setLenses(lenses)
-  renderLenses(document.querySelector('#lenses')!, lenses, run)
 }
 
 async function run(lens: Lens, card: HTMLButtonElement) {
