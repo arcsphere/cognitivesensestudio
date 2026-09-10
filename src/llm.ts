@@ -1,11 +1,13 @@
 export type ProviderConfig = { provider: 'none' | 'ollama' | 'lmstudio' | 'openai' | 'gemini' | 'vercel-openai' | 'vercel-gemini'; endpoint: string; key: string; model: string; temperature: number; tokens: number }
-const preferred = ['mistral', 'llama3', 'phi3', 'gemma']
+const preferred = ['llama3', 'llama', 'mistral', 'phi3', 'gemma']
 const pick = (models: string[]) => models.sort((a, b) => (preferred.findIndex(p => a.toLowerCase().includes(p)) + 10) % 10 - (preferred.findIndex(p => b.toLowerCase().includes(p)) + 10) % 10)[0] || ''
 export async function detectProvider(config: ProviderConfig): Promise<ProviderConfig> {
   if (['openai', 'gemini', 'vercel-openai', 'vercel-gemini'].includes(config.provider)) return config
   try { const r = await fetch('http://localhost:11434/api/tags'); if (r.ok) { const data = await r.json(); const model = pick(data.models?.map((m: { name: string }) => m.name) || []); if (model) return { ...config, provider: 'ollama', endpoint: 'http://localhost:11434', model } } } catch { /* unavailable */ }
   try { const r = await fetch('http://localhost:1234/v1/models'); if (r.ok) { const data = await r.json(); const model = pick(data.data?.map((m: { id: string }) => m.id) || []); if (model) return { ...config, provider: 'lmstudio', endpoint: 'http://localhost:1234/v1', model } } } catch { /* unavailable */ }
-  return config
+  // Cloud is the always-available fallback for synthesis. The Vercel route
+  // keeps GEMINI_API_KEY on the server and requires no browser login.
+  return { ...config, provider: 'vercel-gemini', model: config.model || 'gemini-2.5-flash' }
 }
 export async function runLens(config: ProviderConfig, prompt: string, text: string): Promise<string> {
   if (config.provider === 'vercel-openai' || config.provider === 'vercel-gemini') { const endpoint = config.provider === 'vercel-openai' ? '/api/llm/openai' : '/api/llm/gemini'; const r = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, text, model: config.model, temperature: config.temperature, maxTokens: config.tokens }) }); const data = await r.json(); if (!r.ok) throw new Error(data.error || `Model request failed (${r.status}).`); return String(data.output || '').trim() }
